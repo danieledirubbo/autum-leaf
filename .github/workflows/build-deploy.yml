@@ -1,5 +1,4 @@
 name: Build and Deploy Twine Story
-
 # Si attiva ogni volta che fai push sul branch main,
 # ma solo se cambiano i file dentro src/
 on:
@@ -8,41 +7,40 @@ on:
     paths:
       - 'src/**'
   workflow_dispatch: # permette anche l'avvio manuale dalla tab Actions
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
   group: "pages"
   cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del repository
         uses: actions/checkout@v4
-
       - name: Scarica Tweego
         run: |
           curl -L -o tweego.zip https://github.com/tmedwards/tweego/releases/download/v2.1.1/tweego-2.1.1-linux-x64.zip
           mkdir -p tweego
           unzip -o tweego.zip -d tweego
           chmod +x tweego/tweego
-
-      - name: Compila la storia con Chapbook
+      - name: Scarica l'ultima versione di Chapbook 2
+        run: |
+          CHAPBOOK_VERSION=$(curl -s https://raw.githubusercontent.com/klembot/chapbook/main/package.json | grep '"version"' | head -1 | sed -E 's/.*"version": *"([^"]+)".*/\1/')
+          echo "Versione rilevata: $CHAPBOOK_VERSION"
+          mkdir -p tweego/storyformats/chapbook-2
+          curl -L -o tweego/storyformats/chapbook-2/format.js "https://klembot.github.io/chapbook/use/$CHAPBOOK_VERSION/format.js"
+      - name: Compila la storia con Chapbook 2
         run: |
           mkdir -p dist
-          ./tweego/tweego -f chapbook-1 -o dist/index.html src/
+          ./tweego/tweego -f chapbook-2 -o dist/index.html src/
           cp -r images dist/images
-
       - name: Carica l'artefatto per GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
