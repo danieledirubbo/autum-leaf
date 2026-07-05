@@ -2,6 +2,6 @@
 
 Una storia interattiva ambientata nel mondo di *Vampiri: La Masquerade*.
 
-# autum-leaf
+# Autum Leaf
 
 Interactive fiction set in the world of *Vampire: The Masquerade*.
