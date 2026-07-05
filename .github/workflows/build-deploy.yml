@@ -35,7 +35,7 @@ jobs:
       - name: Compila la storia con Chapbook
         run: |
           mkdir -p dist
-          ./tweego/tweego -f chapbook-1 -o dist/index.html src/
+          ./tweego/tweego -f chapbook-1 -o dist/index.html src/ cp -r images dist/images
 
       - name: Carica l'artefatto per GitHub Pages
         uses: actions/upload-pages-artifact@v3
